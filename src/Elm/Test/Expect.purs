@@ -43,17 +43,17 @@ taskOk assert =
 
 task :: forall x a. Show x => Show a => (Result x a -> Aff Unit) -> Task x a -> Aff Unit
 task assertion t = do
-  res <- Task.unwrap_ t
+  res <- Task.toAff t
   assertion res
 
 task_ :: forall a. Show a => (a -> Aff Unit) -> Task Never a -> Aff Unit
 task_ assertion t = do
-  res <- Task.unwrap_ t
+  res <- Task.toAff t
   case res of
     Ok a -> assertion a
     Err e -> pure (never e)
 
 taskEquals :: forall x a. Show x => Show a => Eq x => Eq a => Result x a -> Task x a -> Aff Unit
 taskEquals expected t = do
-  res <- Task.unwrap_ t
+  res <- Task.toAff t
   equals expected res

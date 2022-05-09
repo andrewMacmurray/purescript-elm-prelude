@@ -29,7 +29,7 @@ module Elm.Task
   , sequence
   , succeed
   , toPromise
-  , unwrap_
+  , toAff
   ) where
 
 import Elm.Basics
@@ -70,7 +70,7 @@ instance bindTask :: Prelude.Bind (Task x) where
   bind (Task task) f = Task (task >>= onResult_)
     where
     onResult_ res = case res of
-      Ok a -> unwrap_ (f a)
+      Ok a -> toAff (f a)
       Err x -> pure (Err x)
 
 instance applicativeTask :: Prelude.Applicative (Task x) where
@@ -176,7 +176,7 @@ onError f (Task task) = Task (task >>= onError_)
   where
   onError_ res = case res of
     Ok a -> pure (Ok a)
-    Err x -> unwrap_ (f x)
+    Err x -> toAff (f x)
 
 mapError :: forall x y a. (x -> y) -> Task x a -> Task y a
 mapError f = onError (f >> fail)
@@ -227,6 +227,5 @@ fromPromise = Promise.toAffE >> fromAff
 fromPromiseWith :: forall x a b. (a -> Result x b) -> Effect (Promise.Promise a) -> Task x b
 fromPromiseWith f = Promise.toAffE >> fromAffWith f
 
--- Internal
-unwrap_ :: forall x a. Task x a -> Aff (Result x a)
-unwrap_ (Task t) = t
+toAff :: forall x a. Task x a -> Aff (Result x a)
+toAff (Task t) = t

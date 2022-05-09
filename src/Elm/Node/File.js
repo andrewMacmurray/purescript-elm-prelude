@@ -1,9 +1,15 @@
 const fs = require("fs/promises");
 
-exports.write_ = (filePath) => {
+exports.write_ = (path) => {
   return (contents) => {
     return () => {
-      return fs.writeFile(filePath, contents);
+      return fs.writeFile(path, contents);
     };
+  };
+};
+
+exports.read_ = (path) => {
+  return () => {
+    return fs.readFile(path);
   };
 };

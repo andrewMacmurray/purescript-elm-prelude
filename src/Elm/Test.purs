@@ -24,6 +24,6 @@ beforeEach :: forall x a. Task x a -> Test -> Test
 beforeEach task =
   Spec.before
     ( do
-        _ <- Task.unwrap_ task
+        _ <- Task.toAff task
         pure unit
     )

@@ -1,5 +1,6 @@
 module Elm.Node.File
   ( Path
+  , read
   , write
   ) where
 
@@ -13,7 +14,12 @@ import Prelude (Unit)
 type Path
   = String
 
+read :: forall err. Path -> Task err String
+read = read_ >> Task.fromPromise
+
 write :: forall err. Path -> String -> Task err Unit
-write filePath = write_ filePath >> Task.fromPromise
+write path = write_ path >> Task.fromPromise
 
 foreign import write_ :: String -> String -> Effect (Promise Unit)
+
+foreign import read_ :: String -> Effect (Promise String)
