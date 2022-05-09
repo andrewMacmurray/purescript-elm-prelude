@@ -41,6 +41,7 @@ import Effect.Aff (Aff, forkAff, joinFiber, launchAff_, runAff_)
 import Effect.Aff as Aff
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect, liftEffect)
+import Effect.Class.Console as Console
 import Elm.Array as Array
 import Elm.Internal.Shortcut as Shortcut
 import Elm.Json (class EncodeJson)
@@ -103,12 +104,12 @@ type Handle x a
     , onJSError :: JSError -> Effect Unit
     }
 
-attempt :: forall x a. Handle x a -> Task x a -> Effect Unit
+attempt :: forall x a. (Result x a -> Effect Unit) -> Task x a -> Effect Unit
 attempt handle (Task task) = runAff_ handle_ task
   where
   handle_ res = case res of
-    Either.Left err -> handle.onJSError err
-    Either.Right res_ -> handle.onResult res_
+    Either.Left err -> Console.error ("Unhandled JS Error In Task: \n" ++ Prelude.show err)
+    Either.Right res_ -> handle res_
 
 perform :: forall a. (a -> Effect Unit) -> Task Never a -> Effect Unit
 perform handle (Task task) =
