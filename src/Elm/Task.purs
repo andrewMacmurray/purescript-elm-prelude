@@ -8,6 +8,7 @@ module Elm.Task
   , andThen
   , andThenDo
   , attempt
+  , attemptWith
   , effect
   , fail
   , fromAff
@@ -28,8 +29,8 @@ module Elm.Task
   , perform
   , sequence
   , succeed
-  , toPromise
   , toAff
+  , toPromise
   ) where
 
 import Elm.Basics
@@ -104,12 +105,19 @@ type Handle x a
     , onJSError :: JSError -> Effect Unit
     }
 
-attempt :: forall x a. (Result x a -> Effect Unit) -> Task x a -> Effect Unit
-attempt handle (Task task) = runAff_ handle_ task
+attemptWith :: forall x a. Handle x a -> Task x a -> Effect Unit
+attemptWith handle (Task task) = runAff_ handle_ task
   where
   handle_ res = case res of
-    Either.Left err -> Console.error ("Unhandled JS Error In Task: \n" ++ Prelude.show err)
-    Either.Right res_ -> handle res_
+    Either.Left err -> handle.onJSError err
+    Either.Right res_ -> handle.onResult res_
+
+attempt :: forall x a. (Result x a -> Effect Unit) -> Task x a -> Effect Unit
+attempt handle =
+  attemptWith
+    { onResult: handle
+    , onJSError: \e -> Console.error ("Unhandled JS Error: \n" ++ Prelude.show e)
+    }
 
 perform :: forall a. (a -> Effect Unit) -> Task Never a -> Effect Unit
 perform handle (Task task) =
