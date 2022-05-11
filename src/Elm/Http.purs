@@ -20,6 +20,7 @@ module Elm.Http
   , jsonBody
   , jsonError
   , post
+  , request
   , stringBody
   ) where
 
@@ -49,6 +50,14 @@ type PostOptions
   = { url :: String
     , headers :: Array Header
     , body :: Body
+    , expect :: Expect
+    }
+
+type RequestOptions
+  = { url :: String
+    , headers :: Array Header
+    , body :: Maybe Body
+    , method :: Method
     , expect :: Expect
     }
 
@@ -114,24 +123,43 @@ header name val = Header (RequestHeader name val)
 
 get :: forall a. DecodeJson a => GetOptions -> Task Error a
 get options =
-  Affjax.defaultRequest
-    { headers = toHeaders options.headers
-    , url = options.url
-    , responseFormat = ResponseFormat.string
-    , method = Either.Left GET
+  request
+    { url: options.url
+    , headers: options.headers
+    , body: Nothing
+    , expect: options.expect
+    , method: GET
     }
-    |> doRequest
-    |> Task.andThen (handleResponse options)
 
 post :: forall a. DecodeJson a => PostOptions -> Task Error a
 post options =
-  Affjax.defaultRequest
-    { headers = toHeaders options.headers
-    , url = options.url
-    , content = toContentBody options.body
-    , responseFormat = ResponseFormat.string
-    , method = Either.Left POST
+  request
+    { url: options.url
+    , headers: options.headers
+    , body: Just options.body
+    , expect: options.expect
+    , method: POST
     }
+
+request :: forall a. DecodeJson a => RequestOptions -> Task Error a
+request options =
+  ( case options.body of
+      Just b ->
+        Affjax.defaultRequest
+          { headers = toHeaders options.headers
+          , url = options.url
+          , content = toContentBody b
+          , responseFormat = ResponseFormat.string
+          , method = Either.Left options.method
+          }
+      Nothing ->
+        Affjax.defaultRequest
+          { headers = toHeaders options.headers
+          , url = options.url
+          , responseFormat = ResponseFormat.string
+          , method = Either.Left options.method
+          }
+  )
     |> doRequest
     |> Task.andThen (handleResponse options)
 

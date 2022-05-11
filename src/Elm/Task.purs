@@ -42,11 +42,11 @@ import Effect.Aff (Aff, forkAff, joinFiber, launchAff_, runAff_)
 import Effect.Aff as Aff
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect, liftEffect)
-import Effect.Class.Console as Console
 import Elm.Array as Array
 import Elm.Internal.Shortcut as Shortcut
 import Elm.Json (class EncodeJson)
 import Elm.Json as Json
+import Elm.Node.Logger as Logger
 import Elm.Result (Result(..))
 import Elm.Result as Result
 import Prelude (Unit, bind, pure, discard, (>>=))
@@ -116,7 +116,7 @@ attempt :: forall x a. (Result x a -> Effect Unit) -> Task x a -> Effect Unit
 attempt handle =
   attemptWith
     { onResult: handle
-    , onJSError: \e -> Console.error ("Unhandled JS Error: \n" ++ Prelude.show e)
+    , onJSError: Logger.error "JS ERROR"
     }
 
 perform :: forall a. (a -> Effect Unit) -> Task Never a -> Effect Unit
