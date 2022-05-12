@@ -25,6 +25,10 @@ module Elm.Task
   , mapError
   , onError
   , parallel2
+  , parallel3
+  , parallel4
+  , parallel5
+  , parallel6
   , peek
   , perform
   , sequence
@@ -199,7 +203,71 @@ parallel2 f (Task a) (Task b) = do
         fiberB <- forkAff b
         resA <- joinFiber fiberA
         resB <- joinFiber fiberB
-        pure (Result.map2 f resA resB)
+        pure (Shortcut.map2 f resA resB)
+    )
+
+parallel3 :: forall x a b c d. (a -> b -> c -> d) -> Task x a -> Task x b -> Task x c -> Task x d
+parallel3 f (Task a) (Task b) (Task c) = do
+  Task
+    ( do
+        fiberA <- forkAff a
+        fiberB <- forkAff b
+        fiberC <- forkAff c
+        resA <- joinFiber fiberA
+        resB <- joinFiber fiberB
+        resC <- joinFiber fiberC
+        pure (Shortcut.map3 f resA resB resC)
+    )
+
+parallel4 :: forall x a b c d e. (a -> b -> c -> d -> e) -> Task x a -> Task x b -> Task x c -> Task x d -> Task x e
+parallel4 f (Task a) (Task b) (Task c) (Task d) = do
+  Task
+    ( do
+        fiberA <- forkAff a
+        fiberB <- forkAff b
+        fiberC <- forkAff c
+        fiberD <- forkAff d
+        resA <- joinFiber fiberA
+        resB <- joinFiber fiberB
+        resC <- joinFiber fiberC
+        resD <- joinFiber fiberD
+        pure (Shortcut.map4 f resA resB resC resD)
+    )
+
+parallel5 :: forall x a b c d e f. (a -> b -> c -> d -> e -> f) -> Task x a -> Task x b -> Task x c -> Task x d -> Task x e -> Task x f
+parallel5 f (Task a) (Task b) (Task c) (Task d) (Task e) = do
+  Task
+    ( do
+        fiberA <- forkAff a
+        fiberB <- forkAff b
+        fiberC <- forkAff c
+        fiberD <- forkAff d
+        fiberE <- forkAff e
+        resA <- joinFiber fiberA
+        resB <- joinFiber fiberB
+        resC <- joinFiber fiberC
+        resD <- joinFiber fiberD
+        resE <- joinFiber fiberE
+        pure (Shortcut.map5 f resA resB resC resD resE)
+    )
+
+parallel6 :: forall x a b c d e f g. (a -> b -> c -> d -> e -> f -> g) -> Task x a -> Task x b -> Task x c -> Task x d -> Task x e -> Task x f -> Task x g
+parallel6 f (Task a) (Task b) (Task c) (Task d) (Task e) (Task f_) = do
+  Task
+    ( do
+        fiberA <- forkAff a
+        fiberB <- forkAff b
+        fiberC <- forkAff c
+        fiberD <- forkAff d
+        fiberE <- forkAff e
+        fiberF <- forkAff f_
+        resA <- joinFiber fiberA
+        resB <- joinFiber fiberB
+        resC <- joinFiber fiberC
+        resD <- joinFiber fiberD
+        resE <- joinFiber fiberE
+        resF <- joinFiber fiberF
+        pure (Shortcut.map6 f resA resB resC resD resE resF)
     )
 
 effect :: forall x a. Effect a -> Task x a
