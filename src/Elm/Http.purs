@@ -6,6 +6,7 @@ module Elm.Http
   , GetOptions
   , Header
   , PostOptions
+  , RequestOptions
   , authorization
   , bearerToken
   , contentType
