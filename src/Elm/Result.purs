@@ -1,16 +1,17 @@
 module Elm.Result
   ( Result(..)
+  , andThen
+  , fromEither
+  , fromMaybe
   , map
   , map2
   , map3
   , map4
   , map5
-  , andThen
-  , withDefault
-  , toMaybe
-  , fromMaybe
   , mapError
-  , fromEither
+  , toEither
+  , toMaybe
+  , withDefault
   ) where
 
 import Data.Either (Either)
@@ -95,3 +96,8 @@ fromEither :: forall a b. Either a b -> Result a b
 fromEither either = case either of
   Either.Right a -> Ok a
   Either.Left b -> Err b
+
+toEither :: forall a b. Result a b -> Either a b
+toEither = case _ of
+  Ok a -> Either.Right a
+  Err b -> Either.Left b

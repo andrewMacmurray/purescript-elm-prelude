@@ -30,6 +30,7 @@ module Elm.Task
   , sequence
   , succeed
   , toAff
+  , toAffWith
   , toPromise
   ) where
 
@@ -236,5 +237,8 @@ fromPromise = Promise.toAffE >> fromAff
 fromPromiseWith :: forall x a b. (a -> Result x b) -> Effect (Promise.Promise a) -> Task x b
 fromPromiseWith f = Promise.toAffE >> fromAffWith f
 
+toAffWith :: forall x a b. (Result x a -> b) -> Task x a -> Aff b
+toAffWith f (Task t) = Prelude.map f t
+
 toAff :: forall x a. Task x a -> Aff (Result x a)
-toAff (Task t) = t
+toAff = toAffWith Prelude.identity
