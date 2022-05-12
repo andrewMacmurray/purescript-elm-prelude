@@ -87,11 +87,10 @@ instance applyTask :: Prelude.Apply (Task x) where
   apply (Task func) (Task task) =
     Task
       ( let
-          onResult_ (Ok f) (Ok next) = Ok (f next)
-
-          onResult_ (Err x) _ = Err x
-
-          onResult_ _ (Err x) = Err x
+          onResult_ f next = case f, next of
+            (Ok f_), (Ok next_) -> Ok (f_ next_)
+            (Err x), _ -> Err x
+            _, (Err x) -> Err x
         in
           do
             f <- func
