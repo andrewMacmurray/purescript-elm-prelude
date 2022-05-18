@@ -2,6 +2,7 @@ module Elm.Json
   ( Decoder
   , Error(..)
   , Value
+  , andMap
   , andThen
   , decode
   , decodeAndThen
@@ -11,6 +12,11 @@ module Elm.Json
   , errorToString
   , fail
   , map
+  , map2
+  , map3
+  , map4
+  , map5
+  , map6
   , module Argonaut.Exports
   , null
   , oneOf
@@ -93,11 +99,29 @@ fail reason = Either.Left (Named reason MissingValue)
 map :: forall a b. (a -> b) -> Decoder a -> Decoder b
 map = Shortcut.map
 
+map2 :: forall a b c. (a -> b -> c) -> Decoder a -> Decoder b -> Decoder c
+map2 = Shortcut.map2
+
+map3 :: forall a b c d. (a -> b -> c -> d) -> Decoder a -> Decoder b -> Decoder c -> Decoder d
+map3 = Shortcut.map3
+
+map4 :: forall a b c d e. (a -> b -> c -> d -> e) -> Decoder a -> Decoder b -> Decoder c -> Decoder d -> Decoder e
+map4 = Shortcut.map4
+
+map5 :: forall a b c d e f. (a -> b -> c -> d -> e -> f) -> Decoder a -> Decoder b -> Decoder c -> Decoder d -> Decoder e -> Decoder f
+map5 = Shortcut.map5
+
+map6 :: forall a b c d e f g. (a -> b -> c -> d -> e -> f -> g) -> Decoder a -> Decoder b -> Decoder c -> Decoder d -> Decoder e -> Decoder f -> Decoder g
+map6 = Shortcut.map6
+
 decodeMap :: forall a b. DecodeJson a => (a -> b) -> Json -> Decoder b
 decodeMap f v = map f (decode v)
 
 andThen :: forall a b. (a -> Decoder b) -> Decoder a -> Decoder b
 andThen = Shortcut.andThen
+
+andMap :: forall a b. Decoder a -> Decoder (a -> b) -> Decoder b
+andMap = Shortcut.andMap
 
 oneOf :: forall a. Array (Decoder a) -> Decoder a
 oneOf = Array.foldl (\a b -> a <|> b) (fail "No Decoder Passed")
