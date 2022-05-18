@@ -33,7 +33,6 @@ import Affjax.RequestHeader (RequestHeader(..))
 import Affjax.ResponseFormat as ResponseFormat
 import Affjax.StatusCode (StatusCode(..))
 import Data.Either as Either
-import Data.Eq (eq)
 import Data.HTTP.Method (Method(..))
 import Elm.Array as Array
 import Elm.Json (class DecodeJson, class EncodeJson)
