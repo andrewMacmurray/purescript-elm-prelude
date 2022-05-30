@@ -1,8 +1,8 @@
 module Elm.Node.File
   ( Path
-  , read
+  , readString
   , readJson
-  , write
+  , writeString
   ) where
 
 import Control.Promise (Promise)
@@ -19,11 +19,11 @@ type Path
 readJson :: forall a. Json.DecodeJson a => Path -> Task Json.Error a
 readJson = read_ >> Task.fromPromiseWith Json.parse
 
-read :: forall err. Path -> Task err String
-read = read_ >> Task.fromPromise
+readString :: forall err. Path -> Task err String
+readString = read_ >> Task.fromPromise
 
-write :: forall err. Path -> String -> Task err Unit
-write path = write_ path >> Task.fromPromise
+writeString :: forall err. Path -> String -> Task err Unit
+writeString path = write_ path >> Task.fromPromise
 
 foreign import write_ :: String -> String -> Effect (Promise Unit)
 

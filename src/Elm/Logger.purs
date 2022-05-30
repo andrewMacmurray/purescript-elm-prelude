@@ -1,4 +1,4 @@
-module Elm.Node.Logger
+module Elm.Logger
   ( debug
   , error
   , info
