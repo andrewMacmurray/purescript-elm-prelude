@@ -51,7 +51,7 @@ import Elm.Array as Array
 import Elm.Internal.Shortcut as Shortcut
 import Elm.Json (class EncodeJson)
 import Elm.Json as Json
-import Elm.Node.Logger as Logger
+import Elm.Logger as Logger
 import Elm.Result (Result(..))
 import Elm.Result as Result
 import Prelude (Unit, bind, pure, discard, (>>=))

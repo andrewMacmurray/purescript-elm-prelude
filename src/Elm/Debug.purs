@@ -4,7 +4,7 @@ module Elm.Debug
 
 import Effect.Unsafe (unsafePerformEffect)
 import Elm.Basics ((|>))
-import Elm.Node.Logger as Logger
+import Elm.Logger as Logger
 import Prelude (class Show)
 
 log :: forall a. Show a => String -> a -> a
