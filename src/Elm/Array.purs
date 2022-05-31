@@ -11,9 +11,10 @@ module Elm.Array
   , map4
   , map5
   , module Array
+  , repeat
   ) where
 
-import Data.Array (cons, drop, filter, find, foldl, foldr, foldM, head, length, singleton, take) as Array
+import Data.Array (cons, drop, filter, find, foldM, foldl, foldr, head, length, replicate, singleton, take) as Array
 import Data.Array as ArrayInternal
 import Elm.Internal.Shortcut as Shortcut
 import Elm.Maybe (Maybe(..))
@@ -40,6 +41,9 @@ concatMap f xs = concat (map f xs)
 
 concat :: forall a. Array (Array a) -> Array a
 concat = Array.foldr (<>) []
+
+repeat :: forall a. Int -> a -> Array a
+repeat = Array.replicate
 
 map :: forall a b. (a -> b) -> Array a -> Array b
 map = Shortcut.map
