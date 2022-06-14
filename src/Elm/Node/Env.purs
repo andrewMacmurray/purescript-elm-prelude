@@ -1,20 +1,26 @@
 module Elm.Node.Env
-  ( optional
-  , unsafe
-  , unsafeInt
+  ( int
+  , optionalInt
+  , optionalString
+  , string
   ) where
 
-optional :: String -> String -> String
-optional = optional_
+optionalString :: String -> String -> String
+optionalString = optionalString_
 
-unsafe :: String → String
-unsafe = unsafe_
+optionalInt :: String -> Int -> Int
+optionalInt = optionalInt_
 
-unsafeInt :: String -> Int
-unsafeInt = unsafeInt_
+string :: String -> String
+string = string_
 
-foreign import unsafe_ :: String -> String
+int :: String -> Int
+int = int_
 
-foreign import unsafeInt_ :: String -> Int
+foreign import string_ :: String -> String
 
-foreign import optional_ :: String -> String -> String
+foreign import optionalString_ :: String -> String -> String
+
+foreign import int_ :: String -> Int
+
+foreign import optionalInt_ :: String -> Int -> Int

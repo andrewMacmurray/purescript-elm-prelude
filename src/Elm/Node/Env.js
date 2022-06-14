@@ -1,22 +1,37 @@
-exports.unsafe_ = unsafe;
+exports.string_ = string;
 
-exports.optional_ = function (key) {
+exports.int_ = int;
+
+exports.optionalString_ = function (key) {
   return function (default_) {
-    const env = process.env[key];
-    return env || default_;
+    try {
+      return string(key);
+    } catch (e) {
+      return default_;
+    }
   };
 };
 
-exports.unsafeInt_ = (key) => {
-  const env = unsafe(key);
+exports.optionalInt_ = function (key) {
+  return function (default_) {
+    try {
+      return int(key);
+    } catch (e) {
+      return default_;
+    }
+  };
+};
+
+function int(key) {
+  const env = string(key);
   try {
     return parseInt(env);
   } catch (e) {
     throw new Error(`Expecting Int Env Var: ${key}`);
   }
-};
+}
 
-function unsafe(key) {
+function string(key) {
   const env = process.env[key];
   if (env) {
     return env;
