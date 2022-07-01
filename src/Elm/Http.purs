@@ -26,6 +26,7 @@ module Elm.Http
   ) where
 
 import Elm.Prelude
+import Affjax (AffjaxDriver)
 import Affjax (Error, Request, Response, defaultRequest, printError, request) as Affjax
 import Affjax.RequestBody (RequestBody)
 import Affjax.RequestBody as RequestBody
@@ -121,9 +122,9 @@ contentType = header "Content-type"
 header :: String -> String -> Header
 header name val = Header (RequestHeader name val)
 
-get :: forall a. DecodeJson a => GetOptions -> Task Error a
-get options =
-  request
+get :: forall a. DecodeJson a => AffjaxDriver -> GetOptions -> Task Error a
+get driver options =
+  request driver
     { url: options.url
     , headers: options.headers
     , body: Nothing
@@ -131,9 +132,9 @@ get options =
     , method: GET
     }
 
-post :: forall a. DecodeJson a => PostOptions -> Task Error a
-post options =
-  request
+post :: forall a. DecodeJson a => AffjaxDriver -> PostOptions -> Task Error a
+post driver options =
+  request driver
     { url: options.url
     , headers: options.headers
     , body: Just options.body
@@ -141,8 +142,8 @@ post options =
     , method: POST
     }
 
-request :: forall a. DecodeJson a => RequestOptions -> Task Error a
-request options =
+request :: forall a. DecodeJson a => AffjaxDriver -> RequestOptions -> Task Error a
+request driver options =
   ( case options.body of
       Just b ->
         Affjax.defaultRequest
@@ -160,7 +161,7 @@ request options =
           , method = Either.Left options.method
           }
   )
-    |> doRequest
+    |> doRequest driver
     |> Task.andThen (handleResponse options)
 
 toContentBody :: Body -> Maybe RequestBody
@@ -172,9 +173,9 @@ toContentBody = case _ of
 fail :: forall a. String -> Task Error a
 fail = Task.fail << CustomError
 
-doRequest :: Affjax.Request String -> Task Error (Affjax.Response String)
-doRequest =
-  Affjax.request
+doRequest :: AffjaxDriver -> Affjax.Request String -> Task Error (Affjax.Response String)
+doRequest driver =
+  Affjax.request driver
     >> Task.fromAffWith Result.fromEither
     >> Task.mapError AffjaxError
 

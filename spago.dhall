@@ -1,8 +1,10 @@
 { name = "purescript-elm-prelude"
-, dependencies =  
+, dependencies =
   [ "aff"
   , "aff-promise"
   , "affjax"
+  , "affjax-node"
+  , "affjax-web"
   , "argonaut"
   , "arrays"
   , "console"

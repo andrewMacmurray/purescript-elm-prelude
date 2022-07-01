@@ -1,8 +1,8 @@
-exports.string_ = string;
+export const string_ = string;
 
-exports.int_ = int;
+export const int_ = int;
 
-exports.optionalString_ = function (key) {
+export function optionalString_(key) {
   return function (default_) {
     try {
       return string(key);
@@ -10,9 +10,9 @@ exports.optionalString_ = function (key) {
       return default_;
     }
   };
-};
+}
 
-exports.optionalInt_ = function (key) {
+export function optionalInt_(key) {
   return function (default_) {
     try {
       return int(key);
@@ -20,7 +20,7 @@ exports.optionalInt_ = function (key) {
       return default_;
     }
   };
-};
+}
 
 function int(key) {
   const env = string(key);

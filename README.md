@@ -42,6 +42,8 @@ in  upstream
         [ "aff"
         , "aff-promise"
         , "affjax"
+        , "affjax-node"
+        , "affjax-web"
         , "argonaut"
         , "arrays"
         , "console"

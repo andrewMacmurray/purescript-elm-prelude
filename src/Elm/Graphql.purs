@@ -9,6 +9,7 @@ module Elm.Graphql
   ) where
 
 import Elm.Prelude
+import Affjax (AffjaxDriver)
 import Data.String as String
 import Data.Symbol (class IsSymbol, reflectSymbol)
 import Elm.Http as Http
@@ -37,8 +38,8 @@ type Client' (operation :: GraphQL) (gql :: Symbol) (i :: Row Type) (o :: Row Ty
     DecodeJson { | o } =>
     Gql operation -> Record i -> Task Http.Error { | o }
 
-request :: Endpoint -> Array Http.Header -> Client
-request endpoint headers = go
+request :: AffjaxDriver -> Endpoint -> Array Http.Header -> Client
+request driver endpoint headers = go
   where
   go ::
     forall (operation :: GraphQL) (i :: Row Type) (o :: Row Type) (gql :: Symbol).
@@ -61,7 +62,7 @@ request endpoint headers = go
                   (reflectSymbol (Proxy :: Proxy gql))
               )
         }
-    ( Http.post
+    ( Http.post driver
         { url: endpoint
         , headers: headers ++ [ Http.contentType "application/json" ]
         , body: Http.stringBody (Json.toString input)
